@@ -14,4 +14,5 @@ Team of 18, split into 3 subgroups B1, B2, B3.
 3. npm i
 4. npm start to run the backend server
 
-Testing
+https://stackoverflow.com/questions/44731340/getting-400-error-bad-request-using-axios
+https://stackoverflow.com/questions/53577406/how-do-i-fix-a-network-error-received-from-axios-response-reactjs

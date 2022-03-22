@@ -46,19 +46,15 @@ const New_Sign_Up = async (request, response) => {
         //#endregion
 
         response.status(200).json({
-            data: {
-                msg: newuser.id,
-                location: 'TRY - Sign Up End',
-                success: true,
-            },
+            msg: newuser.id,
+            location: 'TRY - Sign Up End',
+            success: true,
         });
     } catch (error) {
         response.status(400).json({
-            data: {
-                error: error.message,
-                location: 'CATCH - New Sign Up',
-                success: false,
-            },
+            error: error.message,
+            location: 'CATCH - New Sign Up',
+            success: false,
         });
     }
 };
@@ -72,16 +68,13 @@ const Sign_In = async (request, response) => {
     //#region SIGN IN USER
     const username = request.body.username;
     let password = request.body.password;
-    console.log('HERE')
 
     try {
         /** Handle Errors - Data Validation
          * @note option > { abortEarly: false } will return
          * all the validation errors not just the first
          */
-        const { error } = await SignInSchema.validate(request.body, {
-            abortEarly: false,
-        });
+        const { error } = await SignInSchema.validate(request.body);
         if (error) throw new Error(error.message.replace(/\"/g, ''));
 
         /** Handle Errors - Username does not exist */
@@ -97,6 +90,7 @@ const Sign_In = async (request, response) => {
         /** Compare Passwords */
         const validation = await bcrypt.compare(password, userExists.password);
         if (!validation) throw new Error('Password Authentication failed!');
+        console.log('Sign In  Session Check');
 
         /** Generate JsonWebToken */
         const payload = userExists._id;
@@ -104,6 +98,7 @@ const Sign_In = async (request, response) => {
             expiresIn: '2h',
         });
 
+        console.log('Sign In Backend - 2');
         /** Set JWT to mongoDB and save */
         const sessionToken = new SessionToken({
             session_id: payload,
@@ -124,19 +119,14 @@ const Sign_In = async (request, response) => {
         //#endregion
 
         response.status(200).json({
-            data: {
-                msg: sessionToken._id,
-                location: 'TRY - Sign In End',
-                success: true,
-            },
+            session_id: sessionToken._id,
+            success: true,
         });
     } catch (error) {
-        response.status(400).json({
-            data: {
-                error: error.message,
-                location: 'CATCH - Sign In',
-                success: false,
-            },
+        response.status(401).json({
+            error: error.message,
+            session_id: null,
+            success: false,
         });
     }
 };
@@ -159,12 +149,10 @@ const Sign_Out = async (request, response) => {
 
         if (!activeUserSession) {
             return response.status(200).json({
-                data: {
-                    msg: `${id} is not signed in!`,
-                    redirect: '/sign-in',
-                    success: true,
-                    location: 'TRY - Check For Session - Not found',
-                },
+                msg: `${id} is not signed in!`,
+                redirect: '/sign-in',
+                success: true,
+                location: 'TRY - Check For Session - Not found',
             });
         }
 
@@ -176,24 +164,18 @@ const Sign_Out = async (request, response) => {
         }
 
         //#endregion
-        response
-            .status(200)
-            // .json({
-            //     data: {
-            //         msg: `${id} has been signed out!`,
-            //         redirect: '/sign-in',
-            //         location: 'TRY - Sign Out End',
-            //         success: true,
-            //     },
-            // })
-            .render('signout', { username: id });
+        response.status(200).json({
+            msg: `${id} has been signed out!`,
+            redirect: '/sign-in',
+            location: 'TRY - Sign Out End',
+            success: true,
+        });
+        // .render('signout', { username: id });
     } catch (error) {
         response.status(401).json({
-            data: {
-                error: error.message,
-                location: 'CATCH - Sign Out',
-                success: false,
-            },
+            error: error.message,
+            location: 'CATCH - Sign Out',
+            success: false,
         });
     }
 };
@@ -211,24 +193,20 @@ const ValidateToken = async (request, response) => {
          * 1. Get BEARER token
          * 2. Check DB for sessionToken
          * 3. Verify JWT on sessionToken
-         * 4. Return boolean to change KPV on frontend. 
+         * 4. Return boolean to change KPV on frontend.
          */
 
         //#endregion
         response.status(200).json({
-            data: {
-                msg: `Validate Token`,
-                location: 'TRY - Validate Token End',
-                success: true,
-            },
+            msg: `Validate Token`,
+            location: 'TRY - Validate Token End',
+            success: true,
         });
     } catch (error) {
         response.status(401).json({
-            data: {
-                error: error.message,
-                location: 'CATCH - Validate Token',
-                success: false,
-            },
+            error: error.message,
+            location: 'CATCH - Validate Token',
+            success: false,
         });
     }
 };
