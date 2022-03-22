@@ -13,3 +13,5 @@ Team of 18, split into 3 subgroups B1, B2, B3.
 2. open folder in editor and CD backend
 3. npm i
 4. npm start to run the backend server
+
+Testing
