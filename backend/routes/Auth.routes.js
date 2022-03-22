@@ -19,7 +19,7 @@ router.get('/', async (request, response) => response.render('root'));
 router.post('/new-signup', New_Sign_Up);
 router.post('/sign-in', Sign_In);
 router.post('/sign-out', Sign_Out);
-router.post('/validate-token', ValidateToken);
+router.post('/validate-token', ValidateToken); // Not is use yet
 
 router.get('/reset-password', Password_Reset_Page); // VIEW
 router.post('/reset-password', Password_Reset_Request);
