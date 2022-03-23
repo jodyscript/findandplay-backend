@@ -68,6 +68,7 @@ const Sign_In = async (request, response) => {
     //#region SIGN IN USER
     const username = request.body.username;
     let password = request.body.password;
+    const logger = ['✔️ /auth/sign-in'];
 
     try {
         /** Handle Errors - Data Validation
@@ -76,29 +77,32 @@ const Sign_In = async (request, response) => {
          */
         const { error } = await SignInSchema.validate(request.body);
         if (error) throw new Error(error.message.replace(/\"/g, ''));
+        logger.push('✔️ Validation');
 
         /** Handle Errors - Username does not exist */
         const userExists = await User.findOne({ username: username });
         if (!userExists) throw new Error('Username or Email does not exist!');
+        logger.push('✔️ User Found');
 
         /** Handle Errors - Username has an active session */
         const activeUserSession = await SessionToken.findOne({
             session_id: userExists.id,
         });
-        if (activeUserSession) throw new Error('User already signed in!');
+        if (activeUserSession) throw new Error(`User already signed in!`);
+        logger.push('✔️ No active session found');
 
         /** Compare Passwords */
         const validation = await bcrypt.compare(password, userExists.password);
         if (!validation) throw new Error('Password Authentication failed!');
-        console.log('Sign In  Session Check');
+        logger.push('✔️ Passwords match');
 
         /** Generate JsonWebToken */
         const payload = userExists._id;
         const JWToken = jwt.sign({ payload }, process.env.SECRET, {
             expiresIn: '2h',
         });
+        logger.push('✔️ JWT created 2 hours');
 
-        console.log('Sign In Backend - 2');
         /** Set JWT to mongoDB and save */
         const sessionToken = new SessionToken({
             session_id: payload,
@@ -108,6 +112,7 @@ const Sign_In = async (request, response) => {
 
         /** Set Express Session */
         request.session.user = sessionToken;
+        logger.push('Session saved ✔️');
 
         /** @TODO - Not sure we really need this */
         /** Send newSession to frontend to store as kpv */
@@ -118,11 +123,14 @@ const Sign_In = async (request, response) => {
 
         //#endregion
 
+        console.log(logger)
         response.status(200).json({
             session_id: sessionToken._id,
             success: true,
         });
     } catch (error) {
+        logger.push(`❌ => ${error.message}`);
+        console.log(logger)
         response.status(401).json({
             error: error.message,
             session_id: null,
