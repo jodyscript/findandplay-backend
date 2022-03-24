@@ -45,13 +45,13 @@ const New_Sign_Up = async (request, response) => {
         await newuser.save();
         //#endregion
 
-        response.status(200).json({
+        response.status(201).json({
             msg: newuser.id,
             location: 'TRY - Sign Up End',
             success: true,
         });
     } catch (error) {
-        response.status(400).json({
+        response.status(401).json({
             error: error.message,
             location: 'CATCH - New Sign Up',
             success: false,
@@ -112,25 +112,23 @@ const Sign_In = async (request, response) => {
 
         /** Set Express Session */
         request.session.user = sessionToken;
+
+        /** Send newSession to frontend to store as kpv */
+        const newSession = await SessionToken.findOne({
+            session_id: userExists._id,
+        });
+        if (newSession) throw new Error('Cannot find session!');
         logger.push('Session saved ✔️');
 
-        /** @TODO - Not sure we really need this */
-        /** Send newSession to frontend to store as kpv */
-        // const newSession = await SessionToken.findOne({
-        //     session_id: userExists._id,
-        // });
-        // if (newSession) throw new Error('Cannot find session!');
-
+        console.log(logger);
         //#endregion
-
-        console.log(logger)
         response.status(200).json({
             session_id: sessionToken._id,
             success: true,
         });
     } catch (error) {
         logger.push(`❌ => ${error.message}`);
-        console.log(logger)
+        console.log(logger);
         response.status(401).json({
             error: error.message,
             session_id: null,
@@ -178,7 +176,6 @@ const Sign_Out = async (request, response) => {
             location: 'TRY - Sign Out End',
             success: true,
         });
-        // .render('signout', { username: id });
     } catch (error) {
         response.status(401).json({
             error: error.message,
@@ -189,32 +186,56 @@ const Sign_Out = async (request, response) => {
 };
 
 /**
- * @description User Sign Out
- * @route POST http://localhost:3000/auth/RefreshToken
- * @TODO - Write Method
+ * @description Route to validate and check the session id
+ * @route GET http://localhost:3000/auth/validate-token
+ * @TODO - Needs testing, Session ID ref should come from client
+ * side in the HEADER
  * */
 const ValidateToken = async (request, response) => {
-    //#region Validate / Refresh Token
-    const authorization = request.header.authorization;
+    //# region Validate / Refresh Token
+    const authorization = request.headers.authorization;
     try {
+        if (!authorization) {
+            throw new Error('Invalid Headers!');
+        }
+
+        const Bearer = authorization.split(' ');
+        const Session_IdRef = Bearer[1];
+
+        const Session = await SessionToken.findOne({
+            _id: Session_IdRef,
+        });
+        if (!Session) throw new Error('Cannot find session!');
+
+        const payload = Session.session_jwt;
+
+        jwt.verify(payload, process.env.SECRET, (error, jwtVerifyData) => {
+            if (error) {
+                throw new Error(error);
+            } else {
+                // Dont send token, send boolean on verify jwt
+                response.status(200).json({
+                    session_token: true,
+                    success: true,
+                    data: jwtVerifyData,
+                });
+            }
+        });
+
         /**
-         * 1. Get BEARER token
-         * 2. Check DB for sessionToken
-         * 3. Verify JWT on sessionToken
-         * 4. Return boolean to change KPV on frontend.
+         * @TODO
+         * 1. Get BEARER token - Needs testing
+         * 2. Check DB for sessionToken  - Needs testing
+         * 3. Verify JWT on sessionToken - Needs testing
+         * 4. Return boolean to change KPV on frontend.  - Needs testing
          */
 
         //#endregion
-        response.status(200).json({
-            msg: `Validate Token`,
-            location: 'TRY - Validate Token End',
-            success: true,
-        });
     } catch (error) {
-        response.status(401).json({
-            error: error.message,
-            location: 'CATCH - Validate Token',
+        response.status(403).json({
+            session_token: false,
             success: false,
+            error: error.message,
         });
     }
 };

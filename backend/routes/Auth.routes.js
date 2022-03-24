@@ -19,7 +19,8 @@ router.get('/', async (request, response) => response.render('root'));
 router.post('/new-signup', New_Sign_Up);
 router.post('/sign-in', Sign_In);
 router.post('/sign-out', Sign_Out);
-router.post('/validate-token', ValidateToken); // Not is use yet
+
+router.get('/validate-token', ValidateToken); // Just wrote the code, needs testing
 
 router.get('/reset-password', Password_Reset_Page); // VIEW
 router.post('/reset-password', Password_Reset_Request);
@@ -35,7 +36,8 @@ module.exports = router;
  * NEW-SIGNUP: POST http://localhost:3000/auth/new-signup
  * SIGN-IN: POST http://localhost:3000/auth/sign-in
  * SIGN-OUT: POST http://localhost:3000/auth/sign-out
- * VALIDATE: POST http://localhost:3000/auth/validate-token
+ * 
+ * VALIDATE: GET http://localhost:3000/auth/validate-token
  *
  * SEND-VIEW: GET http://localhost:3000/auth/reset-password
  * SEND-RESET-LINK: POST http://localhost:3000/auth/reset-password
