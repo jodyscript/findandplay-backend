@@ -6,7 +6,7 @@ const User = require('../models/User.model');
 const ResetToken = require('../models/ResetToken.model');
 
 /** Utility and Validation */
-const GenerateToken = require('../utils/generateToken');
+const { GenerateToken } = require('../utils/generateToken');
 const { EmailSchema, PasswordSchema } = require('./Validation.controller');
 
 const sendResetLink_GMAIL = require('../utils/sendResetEmail_gmail');
@@ -15,7 +15,7 @@ const sendResetLink_ETHEREAL = require('../utils/sendResetEmail_ethereal');
 /** @description VIEW Renders Password_Reset_Page */
 const Password_Reset_Page = async (request, response) =>
     response.render('reset');
-    
+
 /** @description VIEW Renders Password_Update_Page */
 const Password_Update_Page = async (request, response) =>
     response.render('update');
