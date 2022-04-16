@@ -51,7 +51,7 @@ const Password_Reset_Request = async (request, response) => {
         // await sendResetLink_GMAIL(user.email, resetURL);
 
         /** @param DEVELOPMENT - unlimited */
-        await sendResetLink_ETHEREAL(user.email, resetURL);
+        await sendResetLink_ETHEREAL(user.email, resetURL); // Comment this one for the presentation and uncomment the PRODUCTION option (Gmail)
 
         //#endregion
         response.status(200).json({
