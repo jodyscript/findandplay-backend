@@ -12,7 +12,6 @@ const { SignUpSchema, SignInSchema } = require('./Validation.controller');
 /**
  * @description Register a new user
  * @route POST http://localhost:3000/auth/new-signup
- * @summary Passing Tests - see testing/signup.test.md
  * */
 const New_Sign_Up = async (request, response) => {
     //#region NEW USER SIGN-UP
@@ -62,7 +61,6 @@ const New_Sign_Up = async (request, response) => {
 /**
  * @description User Sign In
  * @route POST http://localhost:3000/auth/sign-in
- * @summary Passing Tests - But need to look into express-session, I don't think it's needed.
  * */
 const Sign_In = async (request, response) => {
     //#region SIGN IN USER
@@ -140,12 +138,9 @@ const Sign_In = async (request, response) => {
 /**
  * @description User Sign Out
  * @route POST http://localhost:3000/auth/sign-in
- * @TODO - Passing Tests - Need to clean and make clear comments
  * */
 const Sign_Out = async (request, response) => {
     //#region SIGN OUT USER
-
-    // This is the user id equal to SessionToken _id
     const id = request.body.id;
 
     try {
@@ -188,8 +183,6 @@ const Sign_Out = async (request, response) => {
 /**
  * @description Route to validate and check the session id
  * @route GET http://localhost:3000/auth/validate-token
- * @TODO - Needs testing, Session ID ref should come from client
- * side in the HEADER
  * */
 const ValidateToken = async (request, response) => {
     //# region Validate / Refresh Token
@@ -222,14 +215,6 @@ const ValidateToken = async (request, response) => {
             }
         });
 
-        /**
-         * @TODO
-         * 1. Get BEARER token - Needs testing
-         * 2. Check DB for sessionToken  - Needs testing
-         * 3. Verify JWT on sessionToken - Needs testing
-         * 4. Return boolean to change KPV on frontend.  - Needs testing
-         */
-
         //#endregion
     } catch (error) {
         response.status(403).json({
@@ -246,6 +231,3 @@ module.exports = {
     Sign_Out,
     ValidateToken,
 };
-
-
-//test

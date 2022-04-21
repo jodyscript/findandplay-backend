@@ -23,7 +23,6 @@ const Password_Update_Page = async (request, response) =>
 /**
  * @description Password_Reset_Request
  * @route POST http://localhost:3000/auth/reset-password
- * @TODO - Tested and Working! Check ethereal link in console!
  * */
 const Password_Reset_Request = async (request, response) => {
     //#region RESET PASSWORD LINK
@@ -76,7 +75,6 @@ const Password_Reset_Request = async (request, response) => {
 /**
  * @description Password_Update $id $token
  * @route POST http://localhost:3000/auth/reset-password/:userId/:token
- * @TODO Testing - Working but the password script is allowing for empty string. Need to fix this.
  * */
 const Password_Update_Request = async (request, response) => {
     //#region UPDATE PASSWORD
